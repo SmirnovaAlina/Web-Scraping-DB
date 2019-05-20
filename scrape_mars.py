@@ -12,9 +12,9 @@ def init_browser():
 def scrape():
     united_dict = {}
 
-    url = 'https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest'
+    nasa_url = 'https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest'
 
-    response = requests.get(url)
+    response = requests.get(nasa_url)
     soup = BeautifulSoup(response.text, 'lxml')
 
     news_title = str(soup.find_all('div', class_='content_title')[0].a.text).replace('\n', '')
@@ -24,12 +24,15 @@ def scrape():
     united_dict["news_p"] = news_p
 
     browser = init_browser() 
-    url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
-    browser.visit(url)
     time.sleep(1)
+    jpl_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
+    browser.visit(jpl_url)
+    time.sleep(2)
  
     browser.click_link_by_id('full_image')
+    time.sleep(1)
     browser.click_link_by_partial_text('more info')
+    time.sleep(1)
     html = browser.html
     soup = BeautifulSoup(html, 'html.parser')
     main_image = soup.find('img', class_="main_image" )["src"]
@@ -40,25 +43,27 @@ def scrape():
     united_dict["featured_image_url"] = featured_image_url
 
 
-    url = 'https://twitter.com/marswxreport?lang=en'
-    response = requests.get(url)
+    twitter_url = 'https://twitter.com/marswxreport?lang=en'
+    response = requests.get(twitter_url)
     soup = BeautifulSoup(response.text, 'lxml')
     mars_weather = soup.find_all('p', class_="TweetTextSize TweetTextSize--normal js-tweet-text tweet-text")[1].text.split(' ', 1)[1].rsplit(' ', 1)[0]
     united_dict["mars_weather"] = mars_weather
 
-    url = 'https://space-facts.com/mars/'
-    tables = pd.read_html(url)
+    space_url = 'https://space-facts.com/mars/'
+    tables = pd.read_html(space_url)
     df = tables[0]
     df.columns = ['Mars_parametrs', 'Value']
     df.set_index('description', inplace=True)
-
+    data = df.to_html()
+    united_dict["mars_facts"] = data
 
     
     browser = init_browser() 
 
 
-    url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
-    browser.visit(url)
+    astrogeology_url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    browser.visit(astrogeology_url)
+    time.sleep(2)
     html = browser.html
     soup = BeautifulSoup(html, 'html.parser')
 
