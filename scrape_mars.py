@@ -27,17 +27,15 @@ def scrape():
     url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
     browser.visit(url)
     time.sleep(1)
-    
-    html = browser.html
-    soup = BeautifulSoup(html, 'html.parser')
+ 
     browser.click_link_by_id('full_image')
-    new_hrml = browser.click_link_by_partial_text('more info')
-    browser.click_link_by_partial_href('/spaceimages/images/largesize/PIA20464_hires.jpg')
-
+    browser.click_link_by_partial_text('more info')
     html = browser.html
     soup = BeautifulSoup(html, 'html.parser')
-    image = soup.find('img')
-    featured_image_url = image['src']
+    main_image = soup.find('img', class_="main_image" )["src"]
+    
+    main_image_url = 'https://www.jpl.nasa.gov'
+    featured_image_url = main_image_url + main_image
 
     united_dict["featured_image_url"] = featured_image_url
 
@@ -52,6 +50,9 @@ def scrape():
     tables = pd.read_html(url)
     df = tables[0]
     df.columns = ['Mars_parametrs', 'Value']
+    df.set_index('description', inplace=True)
+
+
     
     browser = init_browser() 
 
