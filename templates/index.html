@@ -35,31 +35,26 @@
       <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-12">
           <h3> Featured Mars Image</h3>
-          <img scr="{{mars.featured_image_url}}" style="max-width:100%; max-height: auto;" alt = "Mars Image">
+          <img src="{{mars.featured_image_url}}" style="max-width:100%; max-height: auto;" alt = "Mars Image">
         </div>
 
         <div class="col-lg-4 col-md-4 col-sm-12">
-          <div class="card" style="width: 18rem;">
-              <div class="card-body text-white bg-dark">
+          <div class="card" style="width: 23rem;">
+              <div class="card-body">
                 <h6 class="card-title">Current weather on Mars</h6>
                 <p>{{ mars.mars_weather }}</p>
               </div>
           </div>
-        </div>
-
-        <br>
-        <div class="col-md-12">
-          <h6>Mars Facts</h6>
-          <div style="max-width: 350px; max-height: 150px; font-size: 15px; margin-bottom: 65px;">
+          <h4 style="margin-top: 30px;">Mars Facts</h4>
+          <div style="max-width: 350px;  max-height: 150px; font-size: 15px; margin-bottom: 45px;">
             {{ mars.mars_facts|safe }}
           </div>
-        </div>
       </div>
     </div>
   </div> 
 
 
-  <h3 style="padding-top: 50px; margin-top: 100px; text-align: center;">Mars Hemispheres</h3>
+  <h3 style="padding-top: 40px; margin-top: 50px; text-align: center;">Mars Hemispheres</h3>
   <div class="card-deck"> 
     <hr>
     <div class="col-md-12">
