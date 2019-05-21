@@ -9,19 +9,20 @@ def init_browser():
     return Browser('chrome', **executable_path, headless=False)
 
 
-def scrape():
-    united_dict = {}
+def scrape_info():
+    united_mars = {}
+    
 
     nasa_url = 'https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest'
 
     response = requests.get(nasa_url)
     soup = BeautifulSoup(response.text, 'lxml')
-
+    
     news_title = str(soup.find_all('div', class_='content_title')[0].a.text).replace('\n', '')
-    united_dict["news_title"] = news_title
+    united_mars["news_title"] = news_title
 
     news_p = str(soup.find_all('div', class_="rollover_description_inner")[0].text).replace('\n','')
-    united_dict["news_p"] = news_p
+    united_mars["news_p"] = news_p
 
     browser = init_browser() 
     time.sleep(1)
@@ -30,9 +31,9 @@ def scrape():
     time.sleep(2)
  
     browser.click_link_by_id('full_image')
-    time.sleep(1)
+    time.sleep(3)
     browser.click_link_by_partial_text('more info')
-    time.sleep(1)
+    time.sleep(3)
     html = browser.html
     soup = BeautifulSoup(html, 'html.parser')
     main_image = soup.find('img', class_="main_image" )["src"]
@@ -40,22 +41,24 @@ def scrape():
     main_image_url = 'https://www.jpl.nasa.gov'
     featured_image_url = main_image_url + main_image
 
-    united_dict["featured_image_url"] = featured_image_url
+    united_mars["featured_image_url"] = featured_image_url
+    time.sleep(1)
 
+    browser.quit()
 
     twitter_url = 'https://twitter.com/marswxreport?lang=en'
     response = requests.get(twitter_url)
     soup = BeautifulSoup(response.text, 'lxml')
     mars_weather = soup.find_all('p', class_="TweetTextSize TweetTextSize--normal js-tweet-text tweet-text")[1].text.split(' ', 1)[1].rsplit(' ', 1)[0]
-    united_dict["mars_weather"] = mars_weather
+    united_mars["mars_weather"] = mars_weather
 
     space_url = 'https://space-facts.com/mars/'
     tables = pd.read_html(space_url)
     df = tables[0]
-    df.columns = ['Mars_parametrs', 'Value']
+    df.columns = ['description', 'Value']
     df.set_index('description', inplace=True)
     data = df.to_html()
-    united_dict["mars_facts"] = data
+    united_mars["mars_facts"] = data
 
     
     browser = init_browser() 
@@ -89,15 +92,16 @@ def scrape():
         hemisphere_image_urls.append(hemisphere_dict.copy())
         browser.back()
 
-    united_dict["hemisphere_image_urls"] = hemisphere_image_urls
+    united_mars['hemisphere_image_urls'] = hemisphere_image_urls
 
     browser.quit()
 
-    return united_dict
+    return united_mars
 
 
-
-
+    
+    
+    
 
 
 
